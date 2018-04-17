@@ -1,0 +1,26 @@
+version: 2
+jobs:
+  build:
+      working_directory: ~/circleci-demo-python-django
+      docker:
+        - image: circleci/python:3.6.4
+        - image: circleci/postgres:9.6.2
+          environment:
+            POSTGRES_USER: root
+            POSTGRES_DB: circle_test
+      steps:
+        - checkout
+        - restore_cache:
+            key: deps-{{ checksum "requirements.txt" }}
+        - run:
+            name: Install requirements
+            command: pip install -r requirements.txt
+        - save_cache:
+            key: deps-{{ checksum "requirements.txt" }}
+            paths:
+              - "/usr/local/lib/python3.6/site-packages"
+        - run:
+            name: test
+            command: python manage.py test
+        - store_test_results:
+            path: test-results
