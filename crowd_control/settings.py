@@ -24,7 +24,7 @@ SECRET_KEY = 'm1d44%a$q01s_escmv1&a$6uv*p4pq9%jbi5!@#q9(=q7um35d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', 'ucll-cc-restapi.herokuapps.com']
 
 # Application definition
 
@@ -69,16 +69,32 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'crowd_control.wsgi.application'
 
+def getKeyOrDefault(key, default):
+    value = os.environ.get(key)
+    if(value is None):
+        return default
+    return value
+
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+if(os.environ.get('PRODUCTION')):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': getKeyOrDefault('POSTGRES_NAME', 'ucll-cc'),
+            'USER': getKeyOrDefault('POSTGRES_USER', 'root'),
+            'PASSWORD': getKeyOrDefault('POSTGRES_PASSWORD', ''),
+            'HOST': getKeyOrDefault('POSTGRES_HOST', 'localhost'),
+            'PORT': getKeyOrDefault('POSTGRES_PORT', '')
+        }
     }
-}
-
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 # Password validation
 # https://docs.djangoproject.com/en/2.0/ref/settings/#auth-password-validators
 
@@ -115,7 +131,3 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-# Configure Django App for Heroku.
-import django_heroku
-django_heroku.settings(locals())
