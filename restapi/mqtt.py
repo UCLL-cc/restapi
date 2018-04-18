@@ -1,6 +1,6 @@
+from datetime import datetime, timedelta, time
+from django.utils import timezone
 import paho.mqtt.client as mqtt
-
-from restapi.models import Trigger
 
 
 class AsyncMQTTClient:
@@ -14,7 +14,26 @@ class AsyncMQTTClient:
 
     # The callback for when a PUBLISH message is received from the server.
     def on_message(client, userdata, msg):
-        trigger = Trigger()
+        from restapi.models import Trigger, Day
+        if not msg.topic == 'trigger':
+            return
+
+        today = datetime.now().date()
+        tomorrow = today + timedelta(1)
+
+        today_start = datetime.combine(today, time())
+        today_end = datetime.combine(tomorrow, time())
+
+        day = Day.objects.order_by('-date').filter(date__gte=today_start).filter(date__lt=today_end).first()
+
+        if not day:
+            day = Day(date=datetime.now().date())
+            day.save()
+        else:
+            pass
+
+        trigger = Trigger(time=timezone.localtime(timezone.now()), day=day)
+        trigger.save()
 
     client = mqtt.Client()
     client.on_connect = on_connect
