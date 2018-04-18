@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
     'rest_framework',
     'restapi'
 ]
@@ -47,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware'
 ]
 
 ROOT_URLCONF = 'crowd_control.urls'
@@ -69,17 +71,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'crowd_control.wsgi.application'
 
+
 def getKeyOrDefault(key, default):
     value = os.environ.get(key)
     if(value is None):
         return default
     return value
 
+
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 if(os.environ.get('PRODUCTION')):
     import dj_database_url
-    config =  dj_database_url.config(conn_max_age=600, ssl_require=True)
+    config = dj_database_url.config(conn_max_age=600, ssl_require=True)
     DATABASES = {
         'default':  config
     }
