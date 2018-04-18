@@ -1,15 +1,11 @@
-from django.http import JsonResponse
-from rest_framework.renderers import JSONRenderer
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework import status
 from rest_framework.response import Response
 
-from restapi.serializers import TriggerSerializer, DaySerializer
+from restapi.serializers import TriggerSerializer, DaySerializer, DayListSerializer
 from restapi.models import Trigger, Day
 from rest_framework import viewsets
-from rest_framework.mixins import (RetrieveModelMixin, CreateModelMixin, ListModelMixin, RetrieveModelMixin)
 
 
 class TriggerViewSet(viewsets.ModelViewSet):
@@ -17,7 +13,15 @@ class TriggerViewSet(viewsets.ModelViewSet):
     serializer_class = TriggerSerializer
 
 
-class DayViewSet(RetrieveModelMixin, CreateModelMixin, ListModelMixin, viewsets.GenericViewSet):
-    queryset = Day.objects.all()
-    serializer_class = DaySerializer
-    lookup_field = 'id'
+class DayViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = Day.objects.all()
+        serializer = DaySerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = Day.objects.all()
+        user = get_object_or_404(queryset, pk=pk)
+        serializer = DayListSerializer(user)
+        return Response(serializer.data)
+

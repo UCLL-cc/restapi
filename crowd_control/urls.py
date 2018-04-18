@@ -17,11 +17,11 @@ from django.conf.urls import url, include
 from rest_framework import routers
 
 from restapi import views
+from restapi.views import DayViewSet
 
 router = routers.SimpleRouter()
 router.register(r'triggers', views.TriggerViewSet)
-router.register(r'days', views.DayViewSet)
-
+router.register(r'days', DayViewSet, base_name='day')
 
 urlpatterns = [
     url(r'^', include(router.urls))

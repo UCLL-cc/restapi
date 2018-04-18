@@ -16,6 +16,18 @@ class TriggerSerializer(serializers.ModelSerializer):
 
 
 class DaySerializer(serializers.ModelSerializer):
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
+    class Meta:
+        model = Day
+        fields = ('id', 'date')
+
+
+class DayListSerializer(serializers.ModelSerializer):
     triggers = TriggerSerializer(many=True)
 
     def create(self, validated_data):
