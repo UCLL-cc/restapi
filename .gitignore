@@ -123,5 +123,5 @@ modules.xml
 .idea/misc.xml
 *.ipr
 
-
-# End of https://www.gitignore.io/api/django,intellij,pycharm+all
+*.egg-info
+build/

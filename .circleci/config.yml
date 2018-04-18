@@ -1,9 +1,11 @@
 version: 2
 jobs:
   build:
-      working_directory: ~/circleci-demo-python-django
+      working_directory: ~/restapi
       docker:
         - image: circleci/python:3.6.4
+          environment:
+            PIPENV_VENV_IN_PROJECT: true
         - image: circleci/postgres:9.6.2
           environment:
             POSTGRES_USER: root
@@ -13,19 +15,21 @@ jobs:
         - run: sudo chown -R circleci:circleci /usr/local/bin
         - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
         - restore_cache:
-            key: deps-{{ checksum "requirements.txt" }}
+            key: deps-{{ checksum "Pipfile.lock" }}
         - run:
-            name: Update pip
-            command: pip install --upgrade pip
+            name: Install pipenv
+            command: sudo pip install pipenv
         - run:
-            name: Install requirements
-            command: pip install -r requirements.txt
+            name: Install dependencies
+            command: pipenv install
         - save_cache:
-            key: deps-{{ checksum "requirements.txt" }}
+            key: deps-{{ checksum "Pipfile.lock" }}
             paths:
+              - ".venv"
+              - "/usr/local/bin"
               - "/usr/local/lib/python3.6/site-packages"
         - run:
             name: test
-            command: python manage.py test
+            command: pipenv run "python manage.py test"
         - store_test_results:
             path: test-results
