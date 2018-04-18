@@ -36,10 +36,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'restapi'
+    'restapi',
+    'corsheaders'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -67,12 +69,10 @@ TEMPLATES = [
     },
 ]
 
-CORS_ORIGIN_WHITELIST = [
-    'localhost',
-    'ucll-cc-frontend.herokuapp.com'
-]
+CORS_ORIGIN_ALLOW_ALL = True
 
 WSGI_APPLICATION = 'crowd_control.wsgi.application'
+
 
 def getKeyOrDefault(key, default):
     value = os.environ.get(key)
@@ -80,11 +80,12 @@ def getKeyOrDefault(key, default):
         return default
     return value
 
+
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 if(os.environ.get('PRODUCTION')):
     import dj_database_url
-    config =  dj_database_url.config(conn_max_age=600, ssl_require=True)
+    config = dj_database_url.config(conn_max_age=600, ssl_require=True)
     DATABASES = {
         'default':  config
     }
