@@ -4,7 +4,8 @@ name = "pypi"
 verify_ssl = true
 
 [packages]
-django = "2"
+django = "*"
+djangorestframework = "*"
 
 [requires]
 python_version = "3.6"
