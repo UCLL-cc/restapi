@@ -78,15 +78,21 @@ def getKeyOrDefault(key, default):
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 if(os.environ.get('PRODUCTION')):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': getKeyOrDefault('POSTGRES_NAME', 'ucll-cc'),
-            'USER': getKeyOrDefault('POSTGRES_USER', 'root'),
-            'PASSWORD': getKeyOrDefault('POSTGRES_PASSWORD', ''),
-            'HOST': getKeyOrDefault('POSTGRES_HOST', 'localhost'),
-            'PORT': getKeyOrDefault('POSTGRES_PORT', '')
+    if(os.environ.get('DATABASE_URL')):
+        import dj_database_url
+        DATABASES = {
+            default:  dj_database_url.config(conn_max_age=600, ssl_require=True)
         }
+    else:
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql_psycopg2',
+                'NAME': getKeyOrDefault('POSTGRES_NAME', 'ucll-cc'),
+                'USER': getKeyOrDefault('POSTGRES_USER', 'root'),
+                'PASSWORD': getKeyOrDefault('POSTGRES_PASSWORD', ''),
+                'HOST': getKeyOrDefault('POSTGRES_HOST', 'localhost'),
+                'PORT': getKeyOrDefault('POSTGRES_PORT', '')
+            }
     }
 else:
     DATABASES = {
