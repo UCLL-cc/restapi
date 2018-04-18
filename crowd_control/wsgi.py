@@ -11,6 +11,9 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
+from restapi.mqtt import AsyncMqttBroker
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowd_control.settings")
 
 application = get_wsgi_application()
+broker = AsyncMqttBroker()
