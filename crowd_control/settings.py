@@ -80,8 +80,10 @@ def getKeyOrDefault(key, default):
 if(os.environ.get('PRODUCTION')):
     if(os.environ.get('DATABASE_URL')):
         import dj_database_url
+        config =  dj_database_url.config(conn_max_age=600, ssl_require=True)
+        print(config)
         DATABASES = {
-            default:  dj_database_url.config(conn_max_age=600, ssl_require=True)
+            default:  config
         }
     else:
         DATABASES = {
