@@ -14,13 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf.urls import url, include
-from django.contrib import admin
-from django.urls import path
+from rest_framework import routers
 
 from restapi import views
 
+router = routers.SimpleRouter()
+router.register(r'triggers', views.TriggerViewSet)
+router.register(r'days', views.DayViewSet)
+
+
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    url(r'^triggers/$', views.trigger_list),
-    url(r'^days/$', views.day_list),
+    url(r'^', include(router.urls))
 ]
