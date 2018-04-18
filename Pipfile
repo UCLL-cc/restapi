@@ -10,7 +10,7 @@ django-heroku = "*"
 "psycopg2-binary" = "*"
 dj-database-url = "*"
 gunicorn = "*"
-hbmqtt = "*"
+paho-mqtt = "*"
 
 [requires]
 python_version = "3.6"
