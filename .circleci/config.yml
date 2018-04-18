@@ -6,10 +6,6 @@ jobs:
         - image: circleci/python:3.6.4
           environment:
             PIPENV_VENV_IN_PROJECT: true
-        - image: circleci/postgres:9.6.2
-          environment:
-            POSTGRES_USER: root
-            POSTGRES_DB: circle_test
       steps:
         - checkout
         - run: sudo chown -R circleci:circleci /usr/local/bin
@@ -33,3 +29,34 @@ jobs:
             command: pipenv run "python manage.py test"
         - store_test_results:
             path: test-results
+  deploy:
+    working_directory: ~/restapi
+    machine:
+        enabled: true
+    steps:
+        - checkout
+        - add_ssh_keys:
+            fingerprints:
+                - "b9:24:92:ed:aa:09:92:61:4e:ec:99:c5:a4:45:ff:ca"
+        - run:
+            name: Setup heroku
+            command: bash .circleci/setup-heroku.sh
+        - run:
+            name: Add heroku remote
+            command: heroku git:remote -a ucll-cc-restapi
+        - run:
+            name: Push it to heroku
+            command: git push --force git@heroku.com:ucll-cc-restapi.git HEAD:refs/heads/master
+        - run:
+            name: Run the migrations
+            command: heroku run python manage.py migrate
+
+workflows:
+  version: 2
+  test-deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+              - build
+

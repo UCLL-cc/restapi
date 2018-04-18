@@ -24,7 +24,7 @@ SECRET_KEY = 'm1d44%a$q01s_escmv1&a$6uv*p4pq9%jbi5!@#q9(=q7um35d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'ucll-cc-restapi.herokuapps.com', 'localhost']
+ALLOWED_HOSTS = ['0.0.0.0', 'ucll-cc-restapi.herokuapp.com', 'localhost']
 
 # Application definition
 
