@@ -67,6 +67,11 @@ TEMPLATES = [
     },
 ]
 
+CORS_ORIGIN_WHITELIST = [
+    'localhost',
+    'ucll-cc-frontend.herokuapp.com'
+]
+
 WSGI_APPLICATION = 'crowd_control.wsgi.application'
 
 def getKeyOrDefault(key, default):
