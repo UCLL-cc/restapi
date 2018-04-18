@@ -8,6 +8,7 @@ django = "*"
 djangorestframework = "*"
 django-heroku = "*"
 "psycopg2" = "*"
+hbmqtt = "*"
 
 [requires]
 python_version = "3.6"
