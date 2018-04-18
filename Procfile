@@ -1,1 +1,1 @@
-web: gunicorn crowd_control.wgsi
+web: python manage.py runserver 0.0.0.0:3000

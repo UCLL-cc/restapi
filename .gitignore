@@ -123,5 +123,4 @@ modules.xml
 .idea/misc.xml
 *.ipr
 
-*.egg-info
-build/
+staticfiles/
