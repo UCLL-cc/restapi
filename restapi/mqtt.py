@@ -1,44 +1,31 @@
-import logging
-import asyncio
-import os
+import paho.mqtt.client as mqtt
 
-from hbmqtt.broker import Broker
+from restapi.models import Trigger
 
 
-class AsyncMqttBroker:
+class AsyncMQTTClient:
+    # The callback for when the client receives a CONNACK response from the server.
+    def on_connect(client, userdata, flags, rc):
+        print("Connected with result code " + str(rc))
 
-    @asyncio.coroutine
-    def broker(self):
-        config = {
-            'listeners': {
-                'default': {
-                    'type': 'tcp',
-                    'bind': '0.0.0.0:1883',
-                },
-                'ws-mqtt': {
-                    'bind': '127.0.0.1:8080',
-                    'type': 'ws',
-                    'max_connections': 10,
-                },
-            },
-            'sys_interval': 10,
-            'auth': {
-                'allow-anonymous': True,
-                'password-file': os.path.join(os.path.dirname(os.path.realpath(__file__)), "passwd"),
-                'plugins': [
-                    'auth_file', 'auth_anonymous'
-                ]
+        # Subscribing in on_connect() means that if we lose the connection and
+        # reconnect then subscriptions will be renewed.
+        client.subscribe("$SYS/#")
 
-            }
-        }
+    # The callback for when a PUBLISH message is received from the server.
+    def on_message(client, userdata, msg):
+        trigger = Trigger()
 
-        broker = Broker(config)
-        yield from broker.start()
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
+    client.username_pw_set('bjprbmwc', password='BjEbmRkVwazu')
+    client.connect("m23.cloudmqtt.com", 17184, 60)
 
-    def __init__(self):
-        formatter = "[%(asctime)s] :: %(levelname)s :: %(name)s :: %(message)s"
-        logging.basicConfig(level=logging.INFO, format=formatter)
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        asyncio.get_event_loop().run_until_complete(self.broker())
-        asyncio.get_event_loop().run_forever()
+    client.subscribe('trigger', qos=1)
+
+    # Blocking call that processes network traffic, dispatches callbacks and
+    # handles reconnecting.
+    # Other loop*() functions are available that give a threaded interface and a
+    # manual interface.
+    client.loop_start()
