@@ -7,7 +7,9 @@ verify_ssl = true
 django = "*"
 djangorestframework = "*"
 django-heroku = "*"
-"psycopg2" = "*"
+"psycopg2-binary" = "*"
+dj-database-url = "*"
+gunicorn = "*"
 hbmqtt = "*"
 
 [requires]

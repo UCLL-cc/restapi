@@ -24,7 +24,7 @@ SECRET_KEY = 'm1d44%a$q01s_escmv1&a$6uv*p4pq9%jbi5!@#q9(=q7um35d'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'ucll-cc-restapi.herokuapps.com']
+ALLOWED_HOSTS = ['0.0.0.0', 'ucll-cc-restapi.herokuapps.com', 'localhost']
 
 # Application definition
 
@@ -78,15 +78,10 @@ def getKeyOrDefault(key, default):
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 if(os.environ.get('PRODUCTION')):
+    import dj_database_url
+    config =  dj_database_url.config(conn_max_age=600, ssl_require=True)
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': getKeyOrDefault('POSTGRES_NAME', 'ucll-cc'),
-            'USER': getKeyOrDefault('POSTGRES_USER', 'root'),
-            'PASSWORD': getKeyOrDefault('POSTGRES_PASSWORD', ''),
-            'HOST': getKeyOrDefault('POSTGRES_HOST', 'localhost'),
-            'PORT': getKeyOrDefault('POSTGRES_PORT', '')
-        }
+        'default':  config
     }
 else:
     DATABASES = {
