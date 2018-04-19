@@ -70,7 +70,7 @@ class DayListSerializer(serializers.ModelSerializer):
 
             data = list(filter(lambda x: x not in result, data))
 
-            final.append(TriggerGroup(count=len(result), time=begin.time()))
+            final.append(TriggerGroup(count=len(result), time=begin.time().strftime('%H:%M')))
 
             if begin.time() == stop:
                 break

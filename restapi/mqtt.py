@@ -14,26 +14,29 @@ class AsyncMQTTClient:
 
     # The callback for when a PUBLISH message is received from the server.
     def on_message(client, userdata, msg):
-        from restapi.models import Trigger, Day
-        if not msg.topic == 'trigger':
-            return
+        try:
+            from restapi.models import Trigger, Day
+            if not msg.topic == 'trigger':
+                return
 
-        today = datetime.now().date()
-        tomorrow = today + timedelta(1)
+            today = datetime.now().date()
+            tomorrow = today + timedelta(1)
 
-        today_start = datetime.combine(today, time())
-        today_end = datetime.combine(tomorrow, time())
+            today_start = datetime.combine(today, time())
+            today_end = datetime.combine(tomorrow, time())
 
-        day = Day.objects.order_by('-date').filter(date__gte=today_start).filter(date__lt=today_end).first()
+            day = Day.objects.order_by('-date').filter(date__gte=today_start).filter(date__lt=today_end).first()
 
-        if not day:
-            day = Day(date=datetime.now().date())
-            day.save()
-        else:
+            if not day:
+                day = Day(date=datetime.now().date())
+                day.save()
+            else:
+                pass
+
+            trigger = Trigger(time=timezone.localtime(timezone.now()), day=day)
+            trigger.save()
+        except Exception:
             pass
-
-        trigger = Trigger(time=timezone.localtime(timezone.now()), day=day)
-        trigger.save()
 
     client = mqtt.Client()
     client.on_connect = on_connect
