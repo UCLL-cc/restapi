@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 
 # Create your views here.
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from restapi.serializers import TriggerSerializer, DaySerializer, DayListSerializer
@@ -9,6 +10,7 @@ from rest_framework import viewsets
 
 
 class TriggerViewSet(viewsets.ModelViewSet):
+    model = Trigger
     queryset = Trigger.objects.all()
     serializer_class = TriggerSerializer
 
@@ -24,4 +26,3 @@ class DayViewSet(viewsets.ViewSet):
         user = get_object_or_404(queryset, pk=pk)
         serializer = DayListSerializer(user)
         return Response(serializer.data)
-
