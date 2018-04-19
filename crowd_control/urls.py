@@ -17,6 +17,7 @@ from django.conf.urls import url, include
 from rest_framework import routers
 
 from restapi import views
+from restapi.mqtt import AsyncMQTTClient
 from restapi.views import DayViewSet
 
 router = routers.SimpleRouter()
@@ -26,3 +27,5 @@ router.register(r'days', DayViewSet, base_name='day')
 urlpatterns = [
     url(r'^', include(router.urls))
 ]
+
+MQTTClient = AsyncMQTTClient()

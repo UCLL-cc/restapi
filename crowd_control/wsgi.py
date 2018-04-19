@@ -16,4 +16,3 @@ from restapi.mqtt import AsyncMQTTClient
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "crowd_control.settings")
 
 application = get_wsgi_application()
-MQTTClient = AsyncMQTTClient()
