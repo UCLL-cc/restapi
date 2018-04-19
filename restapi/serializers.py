@@ -60,9 +60,9 @@ class DayListSerializer(serializers.ModelSerializer):
         data = list(obj.triggers.all())
 
         begin = datetime.strptime('00:00', '%H:%M')
-        delta = timedelta(minutes=5)
+        delta = timedelta(minutes=30)
         final = list()
-        stop = datetime.strptime('23:55', '%H:%M').time()
+        stop = datetime.strptime('23:30', '%H:%M').time()
 
         while True:
             end = datetime.combine(date(1, 1, 1), begin.time()) + delta
