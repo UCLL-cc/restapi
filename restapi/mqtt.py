@@ -1,4 +1,6 @@
 from datetime import datetime, timedelta, time
+
+import pytz
 from django.utils import timezone
 import paho.mqtt.client as mqtt
 
@@ -33,7 +35,8 @@ class AsyncMQTTClient:
             else:
                 pass
 
-            trigger = Trigger(time=timezone.localtime(timezone.now()), day=day)
+            time1 = pytz.timezone('Europe/Brussels');
+            trigger = Trigger(time=datetime.now(time1).time(), day=day)
             trigger.save()
         except Exception:
             pass
