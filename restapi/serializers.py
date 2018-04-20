@@ -93,18 +93,19 @@ class DayListSerializer(serializers.ModelSerializer):
             begin = end
 
         time1 = pytz.timezone('Europe/Brussels')
-        time_now_rounded = round_minutes(datetime.now(time1), 30).time();
+        time_now_rounded = round_minutes(datetime.now(time1), 30)
         amount_last_average = 3
-        sum = 20
-        # for x in final:
-        #     for i in range(1, amount_last_average):
-        #         z = time_now_rounded.minute - (delta.total_seconds() / 60 * i)
-        #         if x.time == z.time().strftime('%H:%M'):
-        #             sum += x.count
+        sum = 0
 
+        if obj.date == datetime.today().date():
+            for x in final:
+                for i in range(1, amount_last_average):
+                    z = time_now_rounded - (delta * i)
+                    if x.time == z.time().strftime('%H:%M'):
+                        sum += x.count
 
         real_final = CustomClass(
-            predicted=CustomClass(count=sum / amount_last_average, time=time_now_rounded.strftime('%H:%M')),
+            predicted=CustomClass(count=sum / amount_last_average, time=time_now_rounded.time().strftime('%H:%M')),
             triggers=final)
 
         return FinalSerializer(real_final).data
