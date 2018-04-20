@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, time
 from rest_framework import serializers
 from restapi.models import Trigger, Day
 
@@ -58,7 +58,6 @@ class DayListSerializer(serializers.ModelSerializer):
 
     def get_triggers(self, obj):
         data = list(obj.triggers.all())
-
         begin = datetime.strptime('00:00', '%H:%M')
         delta = timedelta(minutes=30)
         final = list()
@@ -66,15 +65,16 @@ class DayListSerializer(serializers.ModelSerializer):
 
         while True:
             end = datetime.combine(date(1, 1, 1), begin.time()) + delta
-            result = list(filter(lambda x: begin.time() <= x.time <= end.time(), data))
-
-            data = list(filter(lambda x: x not in result, data))
+            result = list()
+            for x in data:
+                if begin.time() <= x.time <= end.time():
+                    result.append(x)
+                    data.remove(x)
 
             final.append(TriggerGroup(count=len(result), time=begin.time().strftime('%H:%M')))
 
             if begin.time() == stop:
                 break
-
             begin = end
 
         return TriggerGroupSerializer(final, many=True).data
