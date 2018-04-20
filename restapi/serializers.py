@@ -99,7 +99,7 @@ class DayListSerializer(serializers.ModelSerializer):
 
         if obj.date == datetime.today().date():
             for x in final:
-                for i in range(1, amount_last_average):
+                for i in range(1, amount_last_average + 1):
                     z = time_now_rounded - (delta * i)
                     if x.time == z.time().strftime('%H:%M'):
                         sum += x.count
