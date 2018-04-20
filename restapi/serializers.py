@@ -1,4 +1,7 @@
+import math
 from datetime import datetime, timedelta, date, time
+
+import pytz
 from rest_framework import serializers
 from restapi.models import Trigger, Day
 
@@ -27,7 +30,7 @@ class DaySerializer(serializers.ModelSerializer):
         fields = ('id', 'date')
 
 
-class TriggerGroup(object):
+class CustomClass(object):
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
@@ -43,9 +46,14 @@ class TriggerGroupSerializer(serializers.Serializer):
         pass
 
 
-class DayListSerializer(serializers.ModelSerializer):
-    triggers = serializers.SerializerMethodField()
-    count = serializers.SerializerMethodField()
+def round_minutes(dt, minutes):
+    new_minute = (dt.minute // minutes + 1) * minutes
+    return dt + timedelta(minutes=new_minute - dt.minute)
+
+
+class FinalSerializer(serializers.Serializer):
+    triggers = TriggerGroupSerializer(many=True)
+    predicted = TriggerGroupSerializer()
 
     def create(self, validated_data):
         pass
@@ -53,15 +61,23 @@ class DayListSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         pass
 
-    def get_count(self, obj):
-        return obj.triggers.count()
 
-    def get_triggers(self, obj):
+class DayListSerializer(serializers.ModelSerializer):
+    data = serializers.SerializerMethodField()
+
+    def create(self, validated_data):
+        pass
+
+    def update(self, instance, validated_data):
+        pass
+
+    def get_data(self, obj):
         data = list(obj.triggers.all())
-        begin = datetime.strptime('00:00', '%H:%M')
-        delta = timedelta(minutes=30)
         final = list()
+
+        begin = datetime.strptime('00:00', '%H:%M')
         stop = datetime.strptime('23:30', '%H:%M').time()
+        delta = timedelta(minutes=30)
 
         while True:
             end = datetime.combine(date(1, 1, 1), begin.time()) + delta
@@ -69,16 +85,30 @@ class DayListSerializer(serializers.ModelSerializer):
             for x in data:
                 if begin.time() <= x.time <= end.time():
                     result.append(x)
-                    data.remove(x)
 
-            final.append(TriggerGroup(count=len(result), time=begin.time().strftime('%H:%M')))
+            final.append(CustomClass(count=len(result), time=begin.time().strftime('%H:%M')))
 
             if begin.time() == stop:
                 break
             begin = end
 
-        return TriggerGroupSerializer(final, many=True).data
+        time1 = pytz.timezone('Europe/Brussels')
+        time_now_rounded = round_minutes(datetime.now(time1), 30).time();
+        amount_last_average = 3
+        sum = 20
+        # for x in final:
+        #     for i in range(1, amount_last_average):
+        #         z = time_now_rounded.minute - (delta.total_seconds() / 60 * i)
+        #         if x.time == z.time().strftime('%H:%M'):
+        #             sum += x.count
+
+
+        real_final = CustomClass(
+            predicted=CustomClass(count=sum / amount_last_average, time=time_now_rounded.strftime('%H:%M')),
+            triggers=final)
+
+        return FinalSerializer(real_final).data
 
     class Meta:
         model = Day
-        fields = ('id', 'date', 'triggers', 'count')
+        fields = ('id', 'date', 'data')
